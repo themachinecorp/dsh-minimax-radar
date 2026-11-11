@@ -1,0 +1,57 @@
+{
+  "name": "dsh-minimax-radar",
+  "version": "1.0.0",
+  "description": "MiniMax Token Plan usage radar for DeepSeek Harness: 5-hour and weekly window remaining, reset countdowns, and this machine's token spend — as a monochrome instrument panel in the sidebar.",
+  "type": "module",
+  "license": "MIT",
+  "author": "THEMACHINE Corp",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themachinecorp/dsh-minimax-radar.git"
+  },
+  "homepage": "https://github.com/themachinecorp/dsh-minimax-radar",
+  "bugs": {
+    "url": "https://github.com/themachinecorp/dsh-minimax-radar/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "minimax",
+    "usage",
+    "token-plan",
+    "quota",
+    "dashboard"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "src/client.jsx",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "esbuild src/client.jsx --jsx-factory=React.createElement --jsx-fragment=React.Fragment --target=es2020 --outfile=client.js --log-level=warning"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}
