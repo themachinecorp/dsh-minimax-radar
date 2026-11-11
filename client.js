@@ -73,6 +73,8 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
 .mmr_ring_c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;pointer-events:none}
 .mmr_ring_n{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1}
 .mmr_ring_n i{font-style:normal;font-size:13px;font-weight:500;color:var(--mmr-ink-2);margin-left:1px}
+.mmr_ring_n.alert{background:var(--mmr-ink);color:var(--mmr-ground);padding:2px 7px 3px;letter-spacing:-.01em}
+.mmr_ring_n.alert i{color:var(--mmr-ground);opacity:.72}
 .mmr_ring_l{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mmr-ink-2)}
 .mmr_ring_s{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mmr-ink-3);margin-top:2px;text-align:center;max-width:120px}
 .mmr_small .mmr_ring_n{font-size:21px}
@@ -125,6 +127,7 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
 .mmr_card_r{display:flex;align-items:baseline;gap:6px;min-width:0}
 .mmr_card_k{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mmr-ink-3);flex:none}
 .mmr_card_v{font-size:12.5px;font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.mmr_card_v.alert{background:var(--mmr-ink);color:var(--mmr-ground);padding:0 4px}
 .mmr_card_m{font-size:9.5px;color:var(--mmr-ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mmr_card_m b{color:var(--mmr-ink);font-weight:500}
 
@@ -269,7 +272,9 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
       );
     }
     const TICK = { color: "currentColor", opacity: 0.3 };
+    const ALERT_BELOW = 10;
     function Ring({ percent, size = 132, label, sub, small }) {
+      const alert = typeof percent === "number" && percent < ALERT_BELOW;
       const stroke = small ? 6 : 8;
       const r = (size - stroke) / 2 - 6;
       const c = 2 * Math.PI * r;
@@ -302,7 +307,16 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
           "svg",
           { width: size, height: size, viewBox: `0 0 ${size} ${size}`, "aria-hidden": "true" },
           ticks,
-          React.createElement("circle", { cx, cy: cx, r, stroke: "currentColor", strokeOpacity: 0.14, strokeWidth: stroke, fill: "none" }),
+          React.createElement("circle", {
+            cx,
+            cy: cx,
+            r,
+            stroke: "currentColor",
+            strokeOpacity: alert ? 0.4 : 0.14,
+            strokeWidth: alert ? Math.max(1.5, stroke - 4) : stroke,
+            strokeDasharray: alert ? "3 4" : void 0,
+            fill: "none"
+          }),
           React.createElement("circle", {
             cx,
             cy: cx,
@@ -318,8 +332,13 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
         React.createElement(
           "div",
           { className: "mmr_ring_c" },
-          React.createElement("div", { className: "mmr_ring_n" }, fmtPct(percent), React.createElement("i", null, "%")),
-          label ? React.createElement("div", { className: "mmr_ring_l" }, label) : null,
+          React.createElement(
+            "div",
+            { className: "mmr_ring_n" + (alert ? " alert" : "") },
+            fmtPct(percent),
+            React.createElement("i", null, "%")
+          ),
+          label ? React.createElement("div", { className: "mmr_ring_l" }, alert ? label + " \xB7 LOW" : label) : null,
           sub ? React.createElement("div", { className: "mmr_ring_s" }, sub) : null
         )
       );
@@ -345,6 +364,7 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
       const weekly = model?.weekly;
       const remaining = countdown((interval?.resetAt ?? 0) - Date.now());
       const today = data?.usage?.today?.total;
+      const low = problem === null && typeof interval?.remaining === "number" && interval.remaining < ALERT_BELOW;
       const headline = problem === null ? fmtPct(interval?.remaining) + "%" : problem === "unconfigured" ? "\u2014" : "!";
       const sub = problem === null ? `\u91CD\u7F6E ${remaining}` : problem === "unconfigured" ? t("state.unconfigured") : t("state.error");
       return React.createElement(
@@ -363,8 +383,8 @@ body[data-ds-dark-theme] .mmr_root{--mmr-ink:#fdfdfd;--mmr-ink-2:rgba(253,253,25
           React.createElement(
             "span",
             { className: "mmr_card_r" },
-            React.createElement("span", { className: "mmr_card_k" }, "5H"),
-            React.createElement("span", { className: "mmr_card_v" }, headline),
+            React.createElement("span", { className: "mmr_card_k" }, low ? "5H \xB7 LOW" : "5H"),
+            React.createElement("span", { className: "mmr_card_v" + (low ? " alert" : "") }, headline),
             weekly && typeof weekly.remaining === "number" ? React.createElement("span", { className: "mmr_card_m" }, "7D " + fmtPct(weekly.remaining) + "%") : null
           ),
           React.createElement(
