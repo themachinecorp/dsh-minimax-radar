@@ -23,6 +23,10 @@
     "quota",
     "dashboard"
   ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh": ">=0.2.0-rc.1 <0.3.0-0"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
@@ -37,7 +41,9 @@
     "locale/*.json",
     "icon.svg",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "assets/*",
+    "screenshots.json"
   ],
   "scripts": {
     "build": "esbuild src/client.jsx --jsx-factory=React.createElement --jsx-fragment=React.Fragment --target=es2020 --outfile=client.js --log-level=warning"

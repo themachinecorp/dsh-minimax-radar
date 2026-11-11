@@ -6,6 +6,21 @@
 配色是「金白水黑」：严格无彩色，只有纯黑和纯白两级。墨色与底色随宿主明暗主题反相 ——
 深色下白墨黑底，浅色下黑墨白底，像一块仪器面板而不是网页里的卡片。
 
+## 安装
+
+```sh
+dsh plugin add github:themachinecorp/dsh-minimax-radar
+```
+
+装完重启一次 dsh web（新增 bundle 需要重建插件图），然后刷新页面。
+额度查询复用 dsh 设置里已配置的 MiniMax 订阅 Key，不需要额外填。
+
+## 截图
+
+![浅色主题下的完整仪表盘](assets/screenshot-1.png)
+
+![深色主题下的完整仪表盘](assets/screenshot-2.png)
+
 ## 装了什么
 
 | 落点 | 内容 |
